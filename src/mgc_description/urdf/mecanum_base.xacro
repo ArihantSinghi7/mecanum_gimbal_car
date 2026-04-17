@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+       xmlns:gz="http://gazebosim.org/schema">
+
+
+    <!-- VARIABLES -->
+    <xacro:property name="chassis_length" value="0.7"  />
+    <xacro:property name="chassis_width"  value="0.4"  />
+    <xacro:property name="chassis_height" value="0.1"  />
+    <xacro:property name="wheel_radius"   value="0.15" />
+    <xacro:property name="wheel_width"    value="0.12" />  
+    <xacro:property name="wheel_base"     value="0.55"  />   <!-- front-to-rear wheel center distance -->
+    <xacro:property name="track_width"    value="0.55"  />   <!-- left-to-right wheel center distance -->
+
+
+    <!-- FUNCTIONS/MACROS -->
+    <xacro:macro name="wheel" params="name_prefix mesh_url">
+        <link name="${name_prefix}_wheel">
+            
+            <xacro:cylinder_inertia m="1.0" r="${wheel_radius}" h="${wheel_width}" 
+                                    o_xyz="0.0 0.0 0.0" o_rpy="${pi/2.0} 0.0 0.0" />
+
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+                <geometry>
+                    <mesh filename="${mesh_url}"
+                          scale="0.003 0.003 0.003" />
+                </geometry>
+                <material name="gray" />
+            </visual>
+
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="${pi/2.0} 0.0 0.0" />
+                <geometry>
+                  <sphere radius="${wheel_radius}" />
+                </geometry>
+            </collision>
+
+        </link>
+    </xacro:macro>
+
+   
+    <!-- LINKS -->
+    <link name="base_link">
+    </link>
+
+    <link name="chassis">
+        
+        <xacro:box_inertia m="3.0" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}" 
+                           o_xyz="0.0 0.0 0.0" o_rpy="0.0 0.0 0.0" />
+
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                
+                <box size="${chassis_length} ${chassis_width} ${chassis_height}" />
+            </geometry>        
+            <material name="cyan" />
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <box size="${chassis_length} ${chassis_width} ${chassis_height}" />
+            </geometry>        
+        </collision>
+
+    </link>
+    
+    <xacro:wheel name_prefix="front_left" mesh_url="package://mgc_description/meshes/MecanumWheel_FL.stl" />
+    <xacro:wheel name_prefix="front_right" mesh_url="package://mgc_description/meshes/MecanumWheel_FR.stl"/>
+    <xacro:wheel name_prefix="rear_left" mesh_url="package://mgc_description/meshes/MecanumWheel_RL.stl"/>
+    <xacro:wheel name_prefix="rear_right" mesh_url="package://mgc_description/meshes/MecanumWheel_RR.stl"/>
+
+
+    <!-- JOINTS -->
+    <joint name="base_link_TO_chassis" type="fixed">
+        <parent link="base_link" />
+        <child link="chassis" />
+        <origin xyz="0.0 0.0 ${wheel_radius}" rpy= "0.0 0.0 0.0" />
+    </joint>
+
+    <joint name="chassis_TO_front_left_wheel" type="continuous">
+        <parent link="chassis" />
+        <child link="front_left_wheel" />
+        <origin xyz="${(wheel_base/2.0)} ${(track_width/2.0)} 0.0" rpy="0.0 0.0 0.0" />
+        <axis xyz = "0 1 0" />
+    </joint>
+
+    <joint name="chassis_TO_front_right_wheel" type="continuous">
+        <parent link="chassis" />
+        <child link="front_right_wheel" />
+        <origin xyz="${(wheel_base/2.0)} -${(track_width/2.0)} 0.0" rpy="0.0 0.0 0.0" />
+        <axis xyz = "0 1 0" />
+    </joint>
+
+    <joint name="chassis_TO_rear_left_wheel" type="continuous">
+        <parent link="chassis" />
+        <child link="rear_left_wheel" />
+        <origin xyz="-${(wheel_base/2.0)} ${(track_width/2.0)} 0.0" rpy="0.0 0.0 0.0" />
+        <axis xyz = "0 1 0" />
+    </joint>
+
+    <joint name="chassis_TO_rear_right_wheel" type="continuous">
+        <parent link="chassis" />
+        <child link="rear_right_wheel" />
+        <origin xyz="-${(wheel_base/2.0)} -${(track_width/2.0)} 0.0" rpy="0.0 0.0 0.0" />
+        <axis xyz = "0 1 0" />
+    </joint>
+
+</robot>

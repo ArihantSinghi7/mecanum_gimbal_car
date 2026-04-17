@@ -1,0 +1,31 @@
+<launch>
+
+      <!-- VARIABLE DECLARATON -->
+       
+      <let name="urdf_path" 
+           value="$(find-pkg-share mgc_description)/urdf/mgc.urdf.xacro" />
+
+      <let name="rviz_config_path"
+           value="$(find-pkg-share mgc_description)/rviz/default_config.rviz" />
+
+
+      <!-- ================= NODES TO LAUNCH ================= -->
+      
+      <!-- ROBOT DESCRIPTION -->
+      <node pkg="robot_state_publisher"
+            exec="robot_state_publisher">
+            <param name='robot_description'
+                   value="$(command 'xacro $(var urdf_path)')" /> 
+      </node>
+
+      <!-- JOINT STATES -->
+      <node pkg="joint_state_publisher_gui"
+            exec="joint_state_publisher_gui" />
+
+      <!-- RVIZ2 -->
+      <node pkg="rviz2"
+            exec="rviz2"
+            output="screen"
+            args="-d $(var rviz_config_path)" />
+
+</launch>
