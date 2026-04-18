@@ -14,6 +14,9 @@
     <let name="world_file_path"
          value="$(find-pkg-share mgc_bringup)/worlds/mgc_world.sdf" />
 
+    <let name="gz_config_path"
+         value="$(find-pkg-share mgc_bringup)/config/gz_bridge.yaml" />
+
 
     <!-- ================= NODES TO LAUNCH ================= -->
 
@@ -33,6 +36,12 @@
     <node pkg="ros_gz_sim"
           exec="create" 
           args="-topic robot_description" />
+
+    <!-- GZ-ROS2 BRIDGE -->
+    <node pkg="ros_gz_bridge"
+          exec="parameter_bridge">
+          <param name="config_file" value="$(var gz_config_path)" />   
+    </node>
 
     <!-- RVIZ2 -->
     <node pkg="rviz2"
