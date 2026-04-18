@@ -8,5 +8,6 @@
     <xacro:include filename="materials.xacro"         />
     <xacro:include filename="common_properties.xacro" />
     <xacro:include filename="mecanum_base.xacro"      />
+    <xacro:include filename="gimbal.xacro"            />
     
 </robot>

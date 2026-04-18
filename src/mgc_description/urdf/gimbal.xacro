@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+    <!-- VARIABLES -->
+    <xacro:property name="gimbal_base_radius" value="0.125" />
+    <xacro:property name="gimbal_base_height" value="0.02"  />
+
+
+    <!-- LINKS -->
+    <link name="gimbal_base">
+
+        <xacro:cylinder_inertia m="1.00138" r="${gimbal_base_radius}" h="${gimbal_base_height}" 
+                                o_xyz="0.0 0.0 ${gimbal_base_height/2.0}" o_rpy="0.0 0.0 0.0" />
+
+        <visual>
+            <origin xyz="0.0 0.0 ${gimbal_base_height/2.0}" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <cylinder radius="${gimbal_base_radius}" length="${gimbal_base_height}" />
+            </geometry>        
+            <material name="magenta" />
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 ${gimbal_base_height/2.0}" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <cylinder radius="${gimbal_base_radius}" length="${gimbal_base_height}" />
+            </geometry>          
+        </collision>
+
+    </link>
+
+    <link name="gimbal_yaw_link">
+
+        <inertial>
+            <mass value="1.56633" />
+            <origin xyz="0.0 0.0 0.05367" rpy="0.0 0.0 0.0" />
+            <inertia ixx = "0.00670726757" ixy = "0.0" ixz = "0.0"
+                     iyy = "0.01423644602" iyz = "0.0" 
+                     izz = "0.01291464056" />
+        </inertial>
+
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://mgc_description/meshes/GimbalYawLink.stl"
+                      scale="0.001 0.001 0.001" />
+            </geometry>          
+            <material name="yellow" />
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 0.0875" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <box size="0.250 0.150 0.175" />
+            </geometry>          
+        </collision>
+
+    </link>
+
+    <link name="gimbal_pitch_link">
+        
+        <inertial>
+            <mass value="1.94247" />
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <inertia ixx = "0.00632147743" ixy = "0.0" ixz = "0.0"
+                     iyy = "0.00415941869" iyz = "0.0" 
+                     izz = "0.00512220725" />
+        </inertial>
+
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://mgc_description/meshes/GimbalPitchLink.stl" 
+                      scale="0.001 0.001 0.001" />
+            </geometry>          
+            <material name="green" />
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <box size="0.100 0.150 0.140" />
+            </geometry>          
+        </collision>
+
+    </link>
+
+    
+    <!-- JOINTS -->
+    <joint name="chassis_TO_gimbal_base" type="fixed">
+        <parent link="chassis" />
+        <child link="gimbal_base" />
+        <origin xyz="0.0 0.0 ${chassis_height/2.0}" rpy= "0.0 0.0 0.0" />
+    </joint>
+
+    <joint name="gimbal_base_TO_gimbal_yaw_link" type="revolute">
+        <parent link="gimbal_base" />
+        <child link="gimbal_yaw_link" />
+        <origin xyz="0.0 0.0 ${gimbal_base_height}" rpy="0.0 0.0 0.0" />
+        <axis xyz = "0 0 1" />
+        <limit lower="-${pi}" upper="${pi}" effort="10.0" velocity="2.0"/>
+    </joint>
+
+    <joint name="gimbal_yaw_link_TO_gimbal_pitch_link" type="revolute">
+        <parent link="gimbal_yaw_link" />
+        <child link="gimbal_pitch_link" />
+        <origin xyz="0.0 0.0 0.1" rpy="0.0 0.0 0.0" />
+        <axis xyz = "0 1 0" />
+        <limit lower="${-pi/2.0}" upper="${pi/2.0}" effort="10.0" velocity="2.0"/>
+    </joint>
+
+</robot>
+                
