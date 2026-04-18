@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+       xmlns:gz="http://gazebosim.org/schema">
+
+    <!-- FUNCTIONS/MACROS -->
+    <xacro:macro name="mecanum_wheel" params="name_prefix fdir1">
+        <gazebo reference="${name_prefix}_wheel">
+            <kp>1000000.0</kp>
+            <kd>100.0</kd>
+            <collision>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>1.0</mu>
+                            <mu2>0.0</mu2>
+                            <fdir1 gz:expressed_in="base_link">${fdir1}</fdir1>
+                        </ode>
+                    </friction>
+                </surface>
+            </collision>
+        </gazebo>
+    </xacro:macro>
+
+
+    <!-- DECLARING FRICTION FOR EACH WHEEL -->
+    <xacro:mecanum_wheel name_prefix="front_left"  fdir1="1 -1 0" />
+    <xacro:mecanum_wheel name_prefix="front_right" fdir1="1 1 0"  />
+    <xacro:mecanum_wheel name_prefix="rear_left"   fdir1="1 1 0"  />
+    <xacro:mecanum_wheel name_prefix="rear_right"  fdir1="1 -1 0" />
+
+</robot>

@@ -9,5 +9,7 @@
     <xacro:include filename="common_properties.xacro" />
     <xacro:include filename="mecanum_base.xacro"      />
     <xacro:include filename="gimbal.xacro"            />
-    
+    <xacro:include filename="mecanum_base_gz.xacro"   />
+    <xacro:include filename="gz_control.xacro"        />
+
 </robot>
