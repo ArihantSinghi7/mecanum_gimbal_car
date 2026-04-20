@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+    <!-- VARIABLES -->
+    <xacro:property name="camera_length" value="0.01" />
+    <xacro:property name="camera_width" value="0.05" />
+    <xacro:property name="camera_height" value="0.05" />
+
+    <!-- LINKS -->
+    <link name="camera_holder">
+        
+        <xacro:box_inertia m="0.2" x="${camera_length}" y="${camera_width}" z="${camera_height}" 
+                           o_xyz="0.0 0.0 0.0" o_rpy="0.0 0.0 0.0" />
+
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <box size="${camera_length} ${camera_width} ${camera_height}" />
+            </geometry>        
+            <material name="blue" />
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <box size="${camera_length} ${camera_width} ${camera_height}" />
+            </geometry>        
+        </collision>
+
+    </link>
+
+    <!-- JOINTS -->
+    <joint name="gimbal_pitch_link_TO_camera_holder" type="fixed">
+        <parent link="gimbal_pitch_link" />
+        <child link="camera_holder" />
+        <origin xyz="${(0.05 + (camera_length)/2.0)} 0.0 0.0" rpy= "0.0 0.0 0.0" />
+    </joint>
+    
+    <!-- GAZEBO PROPERTY -->
+     <gazebo reference="camera_holder">
+        <sensor name="camera" type="camera">
+            <camera>
+                <horizontal_fov>1.3962634</horizontal_fov>
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>R8G8B8</format>
+                </image>
+                <clip>
+                    <near>0.1</near>
+                    <far>15</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+                <optical_frame_id>camera_holder</optical_frame_id>
+                <camera_info_topic>camera/camera_info</camera_info_topic>
+            </camera>
+            <always_on>1</always_on>
+            <update_rate>20</update_rate>
+            <visualize>true</visualize>
+            <topic>camera/image_raw</topic> 
+        </sensor>  
+     </gazebo>
+</robot>
