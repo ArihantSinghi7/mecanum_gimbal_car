@@ -22,9 +22,11 @@
 
     <!-- ROBOT DESCRIPTION -->
     <node pkg="robot_state_publisher"
-          exec="robot_state_publisher">
+          exec="robot_state_publisher"
+          output="screen">
           <param name='robot_description'
-                 value="$(command 'xacro $(var urdf_path)')" /> 
+                 value="$(command 'xacro $(var urdf_path)')" />
+          <param name="use_sim_time" value="true"/>
     </node>
 
     <!-- GZ -->
@@ -34,12 +36,14 @@
 
     <!-- SPAWN ROBOT -->
     <node pkg="ros_gz_sim"
-          exec="create" 
+          exec="create"
+          output="screen"
           args="-topic robot_description" />
 
     <!-- GZ-ROS2 BRIDGE -->
     <node pkg="ros_gz_bridge"
-          exec="parameter_bridge">
+          exec="parameter_bridge"
+          output="screen">
           <param name="config_file" value="$(var gz_config_path)" />   
     </node>
 

@@ -1,0 +1,81 @@
+<launch>
+
+      <set_env name="GZ_SIM_RESOURCE_PATH"
+               value="$(find-pkg-share mgc_description)/.." />
+
+      <!-- ================= VARIABLE DECLARATON ================= -->
+      <let name="urdf_path" 
+           value="$(find-pkg-share mgc_description)/urdf/mgc_gz_ros2_control.urdf.xacro" />
+
+      <let name="rviz_config_path"
+           value="$(find-pkg-share mgc_description)/rviz/default_config.rviz" />
+
+      <let name="gz_config_path"
+           value="$(find-pkg-share mgc_bringup)/config/gz_bridge_ros2_control.yaml" />
+
+      <let name="world_file_path"
+           value="$(find-pkg-share mgc_bringup)/worlds/mgc_world.sdf" />
+
+
+      <!-- ================= NODES TO LAUNCH ================= -->
+
+      <!-- ROBOT DESCRIPTION -->
+      <node pkg="robot_state_publisher"
+            exec="robot_state_publisher"
+            output="screen">
+            <param name="robot_description"
+                  value="$(command 'xacro $(var urdf_path)')" />
+            <param name="use_sim_time" value="true"/>
+      </node>
+
+      <!-- GZ -->
+      <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+            <arg name="gz_args" value="$(var world_file_path) -r" />
+      </include>
+
+      <!-- SPAWN ROBOT -->
+      <node pkg="ros_gz_sim"
+            exec="create"
+            output="screen"
+            args="-topic robot_description" />
+
+     <!-- GZ-ROS2 BRIDGE -->
+      <node pkg="ros_gz_bridge"
+            exec="parameter_bridge"
+            output="screen">
+            <param name="config_file" value="$(var gz_config_path)" />
+      </node>
+
+
+      <!-- RVIZ2 -->
+      <node pkg="rviz2"
+            exec="rviz2"
+            output="screen"
+            args="-d $(var rviz_config_path)" />      
+
+
+      <!-- ================= CONTROLLERS ================= -->
+
+      <!-- Joint State Broadcaster -->
+      <node pkg="controller_manager"
+            exec="spawner"
+            name="joint_state_broadcaster_spawner"
+            output="screen"
+            args="joint_state_broadcaster --controller-manager /controller_manager --controller-manager-timeout 30" />
+
+      <!-- Mecanum Drive Controller -->
+      <node pkg="controller_manager"
+            exec="spawner"
+            name="mecanum_controller_spawner"
+            output="screen"
+            args="mecanum_drive_controller --controller-manager /controller_manager --controller-manager-timeout 30">
+      </node>
+
+      <!-- Gimbal Controller -->
+      <node pkg="controller_manager"
+            exec="spawner"
+            name="gimbal_controller_spawner"
+            output="screen"
+            args="gimbal_controller --controller-manager /controller_manager --controller-manager-timeout 30" />
+      
+</launch>
